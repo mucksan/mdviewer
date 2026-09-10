@@ -29,7 +29,13 @@ input[type="file"] {
     display: none;
 }
 
-.custom-file-upload {
+.controls {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.btn {
     border: 1px solid #ccc;
     display: inline-block;
     padding: 6px 12px;
@@ -39,6 +45,16 @@ input[type="file"] {
     border-radius: 6px;
     font-size: 0.9rem;
     font-weight: 600;
+    text-align: center;
+    line-height: 1.2;
+}
+
+.btn:active {
+    background-color: #e1e4e8;
+}
+
+#content.markdown-body {
+    font-size: var(--base-font-size, 16px);
 }
 
 main {

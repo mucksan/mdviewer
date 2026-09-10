@@ -1,6 +1,20 @@
 document.addEventListener('DOMContentLoaded', () => {
     const fileInput = document.getElementById('fileInput');
     const contentArea = document.getElementById('content');
+    const zoomInBtn = document.getElementById('zoomIn');
+    const zoomOutBtn = document.getElementById('zoomOut');
+
+    let currentZoom = 16; // base font size in px
+
+    zoomInBtn.addEventListener('click', () => {
+        currentZoom += 2;
+        contentArea.style.setProperty('--base-font-size', `${currentZoom}px`);
+    });
+
+    zoomOutBtn.addEventListener('click', () => {
+        currentZoom = Math.max(10, currentZoom - 2);
+        contentArea.style.setProperty('--base-font-size', `${currentZoom}px`);
+    });
 
     fileInput.addEventListener('change', function(e) {
         const file = e.target.files[0];
