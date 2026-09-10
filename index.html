@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MD Viewer</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#24292e">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    
+    <link rel="stylesheet" href="lib/github-markdown.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>MD Viewer</h1>
+        <label for="fileInput" class="custom-file-upload">
+            ファイルを開く
+        </label>
+        <input type="file" id="fileInput" accept=".md,.txt,text/markdown" />
+    </header>
+    
+    <main>
+        <div id="content" class="markdown-body">
+            <div class="empty-state">
+                <p>上の「ファイルを開く」ボタンからMarkdownファイルを選択してください。</p>
+            </div>
+        </div>
+    </main>
+
+    <script src="lib/marked.min.js"></script>
+    <script src="app.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').then(registration => {
+                    console.log('ServiceWorker registration successful');
+                }, err => {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            });
+        }
+    </script>
+</body>
+</html>
