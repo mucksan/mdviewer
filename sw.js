@@ -1,4 +1,4 @@
-const CACHE_NAME = 'md-viewer-v2';
+const CACHE_NAME = 'md-viewer-v4';
 const urlsToCache = [
   './',
   './index.html',
@@ -15,7 +15,8 @@ self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
-        return cache.addAll(urlsToCache);
+        // Bypass the HTTP cache so a new version never caches stale files
+        return cache.addAll(urlsToCache.map(url => new Request(url, { cache: 'reload' })));
       })
       .then(() => self.skipWaiting())
   );

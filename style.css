@@ -12,6 +12,7 @@ header {
     color: white;
     padding: 15px 20px;
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
     position: sticky;
@@ -51,6 +52,45 @@ input[type="file"] {
 
 .btn:active {
     background-color: #e1e4e8;
+}
+
+.search-bar {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.search-bar[hidden] {
+    display: none;
+}
+
+.search-bar input {
+    flex: 1;
+    min-width: 0;
+    padding: 6px 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px; /* 16px以上でiOSの自動ズームを防ぐ */
+}
+
+.search-count {
+    font-size: 0.85rem;
+    color: #d1d5da;
+    white-space: nowrap;
+    min-width: 3em;
+    text-align: right;
+}
+
+mark.search-hit {
+    background-color: #fff3a3;
+    color: inherit;
+    padding: 0;
+}
+
+mark.search-hit.current {
+    background-color: #ff9632;
 }
 
 #content.markdown-body {

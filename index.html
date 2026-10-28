@@ -17,11 +17,19 @@
         <div class="controls">
             <button id="zoomOut" class="btn" aria-label="縮小">A-</button>
             <button id="zoomIn" class="btn" aria-label="拡大">A+</button>
+            <button id="searchToggle" class="btn" aria-label="検索">検索</button>
             <label for="fileInput" class="btn">
                 開く
             </label>
         </div>
         <input type="file" id="fileInput" accept=".md,.txt,text/markdown" />
+        <div id="searchBar" class="search-bar" hidden>
+            <input type="search" id="searchInput" placeholder="キーワードを検索" autocomplete="off" enterkeyhint="search" />
+            <span id="searchCount" class="search-count"></span>
+            <button id="searchPrev" class="btn" aria-label="前の一致">▲</button>
+            <button id="searchNext" class="btn" aria-label="次の一致">▼</button>
+            <button id="searchClose" class="btn" aria-label="検索を閉じる">✕</button>
+        </div>
     </header>
     
     <main>

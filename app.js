@@ -56,7 +56,128 @@ document.addEventListener('DOMContentLoaded', () => {
         // Parse markdown using marked
         contentArea.innerHTML = marked.parse(contents);
         document.title = name ? `${name} - MD Viewer` : 'MD Viewer';
+        // Re-apply the active search to the new document
+        if (!searchBar.hidden) {
+            runSearch();
+        }
     }
+
+    // Keyword search
+    const searchBar = document.getElementById('searchBar');
+    const searchInput = document.getElementById('searchInput');
+    const searchCount = document.getElementById('searchCount');
+    let hits = [];
+    let currentHit = -1;
+
+    function clearHighlights() {
+        contentArea.querySelectorAll('mark.search-hit').forEach(mark => {
+            const parent = mark.parentNode;
+            parent.replaceChild(document.createTextNode(mark.textContent), mark);
+            parent.normalize();
+        });
+        hits = [];
+        currentHit = -1;
+    }
+
+    function highlight(keyword) {
+        const lowerKeyword = keyword.toLowerCase();
+        const walker = document.createTreeWalker(contentArea, NodeFilter.SHOW_TEXT);
+        const textNodes = [];
+        while (walker.nextNode()) {
+            if (walker.currentNode.nodeValue.toLowerCase().includes(lowerKeyword)) {
+                textNodes.push(walker.currentNode);
+            }
+        }
+
+        textNodes.forEach(node => {
+            const text = node.nodeValue;
+            const lowerText = text.toLowerCase();
+            const fragment = document.createDocumentFragment();
+            let pos = 0;
+            let index;
+            while ((index = lowerText.indexOf(lowerKeyword, pos)) !== -1) {
+                fragment.appendChild(document.createTextNode(text.slice(pos, index)));
+                const mark = document.createElement('mark');
+                mark.className = 'search-hit';
+                mark.textContent = text.slice(index, index + keyword.length);
+                fragment.appendChild(mark);
+                hits.push(mark);
+                pos = index + keyword.length;
+            }
+            fragment.appendChild(document.createTextNode(text.slice(pos)));
+            node.parentNode.replaceChild(fragment, node);
+        });
+    }
+
+    function goToHit(index) {
+        if (hits.length === 0) {
+            return;
+        }
+        if (currentHit >= 0) {
+            hits[currentHit].classList.remove('current');
+        }
+        currentHit = (index + hits.length) % hits.length;
+        const mark = hits[currentHit];
+        mark.classList.add('current');
+        mark.scrollIntoView({ block: 'center' });
+        searchCount.textContent = `${currentHit + 1}/${hits.length}`;
+    }
+
+    function runSearch() {
+        clearHighlights();
+        const keyword = searchInput.value.trim();
+        if (!keyword) {
+            searchCount.textContent = '';
+            return;
+        }
+        highlight(keyword);
+        if (hits.length === 0) {
+            searchCount.textContent = '0件';
+            return;
+        }
+        goToHit(0);
+    }
+
+    function openSearch() {
+        searchBar.hidden = false;
+        searchInput.focus();
+        searchInput.select();
+    }
+
+    function closeSearch() {
+        searchBar.hidden = true;
+        clearHighlights();
+        searchCount.textContent = '';
+    }
+
+    document.getElementById('searchToggle').addEventListener('click', () => {
+        if (searchBar.hidden) {
+            openSearch();
+        } else {
+            closeSearch();
+        }
+    });
+    document.getElementById('searchClose').addEventListener('click', closeSearch);
+    document.getElementById('searchPrev').addEventListener('click', () => goToHit(currentHit - 1));
+    document.getElementById('searchNext').addEventListener('click', () => goToHit(currentHit + 1));
+
+    searchInput.addEventListener('input', runSearch);
+    searchInput.addEventListener('keydown', e => {
+        if (e.key === 'Enter' && !e.isComposing) {
+            e.preventDefault();
+            goToHit(e.shiftKey ? currentHit - 1 : currentHit + 1);
+        } else if (e.key === 'Escape') {
+            closeSearch();
+        }
+    });
+
+    // Ctrl/Cmd+F opens the in-app search instead of the browser's
+    document.addEventListener('keydown', e => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+            e.preventDefault();
+            openSearch();
+        }
+    });
 
     // Restore the previously opened file (works offline since it is stored locally)
     loadLastFile()
